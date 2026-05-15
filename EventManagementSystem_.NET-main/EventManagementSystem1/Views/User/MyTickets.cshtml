@@ -1,0 +1,72 @@
+﻿@{
+    ViewBag.Title = "My Tickets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2>🎫 My Tickets</h2>
+    <p class="lead">Your event tickets and QR codes</p>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    <div class="row">
+        @if (ViewBag.Participations != null && ((System.Collections.IList)ViewBag.Participations).Count > 0)
+        {
+            foreach (var participation in ViewBag.Participations)
+            {
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Registration #@participation.ParticipantId</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title">Event ID: @participation.EventId</h6>
+                            <p class="card-text">
+                                <strong>Registration Date:</strong> @participation.RegistrationDate.ToString("MMM dd, yyyy")<br>
+                                <strong>Status:</strong>
+                                @if (participation.AttendanceStatus == "Registered")
+                                {
+                                    <span class="badge bg-success">@participation.AttendanceStatus</span>
+                                }
+                                else if (participation.AttendanceStatus == "Attended")
+                                {
+                                    <span class="badge bg-primary">@participation.AttendanceStatus</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@participation.AttendanceStatus</span>
+                                }
+                            </p>
+                            <div class="text-center">
+                                <div class="border p-3 bg-light">
+                                    <strong>Digital Pass:</strong><br>
+                                    <small class="text-muted">Event:@participation.EventId,User:@participation.UserId,Registration:@participation.ParticipantId</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer text-muted">
+                            Registered: @participation.RegistrationDate.ToString("MMM dd, yyyy hh:mm tt")
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <h4>No Registrations Found</h4>
+                    <p>You haven't registered for any events yet.</p>
+                    <a href="@Url.Action("BrowseEvents", "User")" class="btn btn-primary">Browse Events</a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-3">
+        <a href="@Url.Action("Dashboard", "User")" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>

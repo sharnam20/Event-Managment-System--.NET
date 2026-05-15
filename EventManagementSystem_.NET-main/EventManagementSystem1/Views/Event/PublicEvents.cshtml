@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "Browse Events - EventHub";
+    var events = ViewBag.Events as List<EventManagementSystem1.Models.Event>;
+}
+
+<div class="container" style="padding: 50px 0;">
+    <div class="row">
+        <div class="col-12 text-center" style="margin-bottom: 50px;">
+            <h1 style="font-weight: bold; font-size: 2.5rem;">Browse Events</h1>
+            <p style="color: #666; font-size: 1.1rem;">Discover amazing events happening around you</p>
+        </div>
+    </div>
+
+    @if (events != null && events.Count > 0)
+    {
+        <div class="row">
+            @foreach (var eventItem in events)
+            {
+                <div class="col-lg-4 col-md-6" style="margin-bottom: 30px;">
+                    <div class="card" style="border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); height: 100%;">
+                        <div class="card-body" style="padding: 30px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                                <h5 style="font-weight: bold; margin: 0;">@eventItem.Title</h5>
+                                <span class="badge @(eventItem.IsFree ? "bg-success" : "bg-primary")">
+                                    @(eventItem.IsFree ? "Free" : "₹" + eventItem.Price)
+                                </span>
+                            </div>
+
+                            <p style="color: #666; margin-bottom: 20px;">
+                                @if (eventItem.Description != null && eventItem.Description.Length > 100)
+                                {
+                                    @(eventItem.Description.Substring(0, 100) + "...")
+                                }
+                                else
+                                {
+                                    @eventItem.Description
+                                }
+                            </p>
+
+                            <div style="margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                    <i class="fas fa-calendar text-primary" style="margin-right: 10px;"></i>
+                                    <small style="color: #666;">@eventItem.EventDate.ToString("MMM dd, yyyy")</small>
+                                </div>
+                                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                    <i class="fas fa-clock text-success" style="margin-right: 10px;"></i>
+                                    <small style="color: #666;">@eventItem.StartTime.ToString("hh\\:mm")</small>
+                                </div>
+                                <div style="display: flex; align-items: center;">
+                                    <i class="fas fa-users text-warning" style="margin-right: 10px;"></i>
+                                    <small style="color: #666;">Max @eventItem.MaxParticipants participants</small>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                @Html.ActionLink("View Details", "Details", "Event", new { id = eventItem.EventId }, new { @class = "btn btn-outline-primary btn-sm" })
+
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="fas fa-ticket-alt"></i> Register
+                                    </button>
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Login to Register", "Login", "Account", null, new { @class = "btn btn-success btn-sm" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12 text-center">
+                <div style="padding: 50px 0;">
+                    <i class="fas fa-calendar-times" style="font-size: 4rem; color: #ccc;"></i>
+                    <h3 style="margin-top: 20px; color: #666;">No Events Available</h3>
+                    <p style="color: #666;">Check back later for upcoming events!</p>
+                    @if (User.Identity.IsAuthenticated && Session["Role"] != null && Session["Role"].ToString() == "Admin")
+                    {
+                        @Html.ActionLink("Create First Event", "CreateEvent", "Admin", null, new { @class = "btn btn-primary", style = "margin-top: 20px;" })
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

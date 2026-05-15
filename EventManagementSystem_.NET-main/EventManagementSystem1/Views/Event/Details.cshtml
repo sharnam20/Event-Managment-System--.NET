@@ -1,0 +1,134 @@
+﻿@model EventManagementSystem1.Models.Event
+@using EventManagementSystem1.Models
+
+@{
+    ViewBag.Title = "Event Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int currentParticipants = 0;
+    bool isRegistered = false;
+
+    using (var db = new DatabaseContext())
+    {
+        currentParticipants = db.Participants.Count(p => p.EventId == Model.EventId);
+
+        if (User.Identity.IsAuthenticated)
+        {
+            isRegistered = db.Participants.Any(p => p.EventId == Model.EventId && p.UserId == (int)Session["UserId"]);
+        }
+    }
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Event Details Card -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h4 class="m-0 font-weight-bold text-primary">@Model.Title</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Date:</strong> @Model.Date.ToString("dddd, MMMM dd, yyyy")</p>
+                            <p><strong>Time:</strong> @Model.Time.ToString("hh:mm tt")</p>
+                            <p><strong>Venue:</strong> @Model.Venue.Name</p>
+                            <p><strong>Location:</strong> @Model.Venue.Location</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Capacity:</strong> @Model.Venue.Capacity people</p>
+                            <p><strong>Max Participants:</strong> @Model.MaxParticipants</p>
+                            <p><strong>Available Spots:</strong> @(Model.MaxParticipants - currentParticipants)</p>
+                            <p>
+                                <strong>Status:</strong>
+                                @if (Model.Date < DateTime.Today)
+                                {
+                                    <span class="badge badge-secondary">Completed</span>
+                                }
+                                else if (currentParticipants >= Model.MaxParticipants)
+                                {
+                                    <span class="badge badge-danger">Sold Out</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-success">Open</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <h5>Description</h5>
+                    <p>@Model.Description</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Registration Panel -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Registration</h6>
+                </div>
+                <div class="card-body text-center">
+                    @if (Model.Date < DateTime.Today)
+                    {
+                        <p class="text-muted">This event has already passed.</p>
+                    }
+                    else if (currentParticipants >= Model.MaxParticipants)
+                    {
+                        <p class="text-danger">This event is sold out.</p>
+                    }
+                    else if (isRegistered)
+                    {
+                        <p class="text-success">You are registered for this event!</p>
+                        @Html.ActionLink("View Ticket", "MyTickets", "User", null, new { @class = "btn btn-success" })
+                    }
+                    else if (User.Identity.IsAuthenticated)
+                    {
+                        using (Html.BeginForm("Register", "Event", new { id = Model.EventId }, FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-primary btn-lg">Register Now</button>
+                        }
+                    }
+                    else
+                    {
+                        <p>Please login to register for this event.</p>
+                        @Html.ActionLink("Login", "Login", "Account", null, new { @class = "btn btn-primary" })
+                    }
+
+                    <hr />
+                    <small class="text-muted">
+                        @currentParticipants out of @Model.MaxParticipants registered
+                    </small>
+                </div>
+            </div>
+
+            <!-- Venue Information -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Venue Information</h6>
+                </div>
+                <div class="card-body">
+                    <h6>@Model.Venue.Name</h6>
+                    <p>@Model.Venue.Location</p>
+                    <p><strong>Capacity:</strong> @Model.Venue.Capacity people</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-3">
+        <div class="col-12">
+            @if (User.IsInRole("Admin"))
+            {
+                @Html.ActionLink("Edit Event", "EditEvent", "Admin", new { id = Model.EventId }, new { @class = "btn btn-warning" })
+                @Html.ActionLink("Delete Event", "DeleteEvent", "Admin", new { id = Model.EventId }, new { @class = "btn btn-danger ml-2" })
+            }
+            @Html.ActionLink("Back to Events", "PublicEvents", "Event", null, new { @class = "btn btn-secondary ml-2" })
+        </div>
+    </div>
+</div>

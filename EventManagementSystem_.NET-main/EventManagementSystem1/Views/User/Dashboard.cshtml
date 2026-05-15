@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "User Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-header">
+    <div class="container">
+        <h1>🎉 Welcome Back, @Session["FullName"]!</h1>
+        <p class="lead">Discover and manage your events</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="card stats-card text-center">
+                <div class="card-body">
+                    <div style="font-size: 3rem;">📅</div>
+                    <h3>@ViewBag.TotalRegistrations</h3>
+                    <p class="mb-0">Total Registrations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="card stats-card text-center">
+                <div class="card-body">
+                    <div style="font-size: 3rem;">⏰</div>
+                    <h3>@ViewBag.UpcomingEvents</h3>
+                    <p class="mb-0">Upcoming Events</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="card stats-card text-center">
+                <div class="card-body">
+                    <div style="font-size: 3rem;">✅</div>
+                    <h3>@ViewBag.CompletedEvents</h3>
+                    <p class="mb-0">Completed Events</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">⚡ Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="@Url.Action("BrowseEvents", "User")" class="btn btn-primary btn-lg w-100">Browse Events</a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="@Url.Action("MyEvents", "User")" class="btn btn-success btn-lg w-100">My Events</a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="@Url.Action("MyTickets", "User")" class="btn btn-info btn-lg w-100">My Tickets</a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="@Url.Action("UserProfile", "User")" class="btn btn-warning btn-lg w-100">My Profile</a>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="@Url.Action("UpcomingEvents", "User")" class="btn btn-outline-primary btn-lg w-100">Upcoming Events</a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <a href="@Url.Action("EventHistory", "User")" class="btn btn-outline-secondary btn-lg w-100">Event History</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

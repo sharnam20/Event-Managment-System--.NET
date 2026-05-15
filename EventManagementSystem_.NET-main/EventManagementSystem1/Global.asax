@@ -1,0 +1,1 @@
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="EventManagementSystem1.Global" Language="C#" %>
